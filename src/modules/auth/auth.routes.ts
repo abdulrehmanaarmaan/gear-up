@@ -3,9 +3,9 @@ import { authControllers } from "./auth.controllers";
 
 const router = Router()
 
-const { createAccount, loginUser, getMyAccount } = authControllers
+const { createUser, loginUser, getMyAccount } = authControllers
 
-router.post('/register', createAccount)
+router.post('/register', createUser)
 
 router.post('/login', loginUser)
 
