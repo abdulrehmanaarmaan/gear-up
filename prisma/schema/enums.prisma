@@ -32,20 +32,16 @@ enum RentalStatus {
     CANCELLED
 }
 
-enum PaymentMethod {
-    CARD
-    BANK
-    MOBILE_BANKING
-}
-
-enum PaymentProvider {
-    STRIPE
-    SSLCOMMERZ
-}
+// enum PaymentMethod {
+// CARD
+// BANK
+// MOBILE_BANKING
+// }
 
 enum PaymentStatus {
     PENDING
     COMPLETED
     FAILED
     REFUNDED
+    EXPIRED
 }
