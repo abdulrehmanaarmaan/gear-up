@@ -1,6 +1,6 @@
 import { UserRole, UserStatus } from "../../../generated/prisma/enums"
 
-export interface IUser {
+export interface IUserAccount {
     name: string
     email: string
     password: string
@@ -8,7 +8,6 @@ export interface IUser {
     image?: string
     role?: UserRole
     status?: UserStatus
-    isVerified?: boolean
     address?: string
     city?: string
     country?: string

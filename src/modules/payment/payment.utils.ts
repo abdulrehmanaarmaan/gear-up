@@ -1,79 +1,52 @@
 import Stripe from "stripe"
-import { stripe } from "../../lib/stripe"
 import { prisma } from "../../lib/prisma"
-import { PaymentStatus } from "../../../generated/prisma/enums"
+import { PaymentStatus, RentalStatus } from "../../../generated/prisma/enums"
 
 export const handleCheckoutCompleted = async (session: Stripe.Checkout.Session) => {
     const { customerId, rentalOrderId } = session?.metadata!
-
     const stripeCustomerId = session?.customer as string
-    const stripeSubscriptionId = session?.subscription as string
-    if (!customerId || !stripeCustomerId || !stripeSubscriptionId) {
+    const paymentIntentId = session?.payment_intent as string
+    if (!customerId || !rentalOrderId || !stripeCustomerId || !paymentIntentId) {
         throw new Error("Missing required metadata in the session object.")
     }
-    const stripeSubscription = await stripe.subscriptions.retrieve(stripeSubscriptionId)
-    const currentPeriodEnd = await getPeriodEnd(stripeSubscription)
 
-    await prisma.payment.upsert({
-        where: {
-            customerId
-        },
-        create: {
-            rentalOrderId: rentalOrderId as string,
-            customerId,
-            stripeCustomerId,
-            stripeSubscriptionId,
-            currentPeriodEnd
-        },
-        update: {
-            stripeCustomerId,
-            stripeSubscriptionId,
-            currentPeriodEnd
-        }
-    })
-}
+    await prisma.$transaction(async (tx) => {
 
+        const { COMPLETED } = PaymentStatus
 
-export const getPeriodEnd = async (payload: Stripe.Subscription) => {
-    const currentPeriodEndInMS = payload.items.data[0]?.current_period_end!
-    const currentPeriodEnd = new Date(currentPeriodEndInMS * 1000)
-    return currentPeriodEnd
-}
+        await tx.payment.upsert({
+            where: {
+                paymentIntentId
+            },
+            create: {
+                paymentIntentId,
+                transactionId: session?.id,
+                stripeCustomerId,
+                status: COMPLETED,
+                rentalOrderId: rentalOrderId as string,
+                customerId,
+                amount: session.amount_total! / 100,
+                paidAt: new Date(session.created * 100)
+            },
+            update: {
+                transactionId: session?.id,
+                stripeCustomerId,
+                status: COMPLETED,
+                rentalOrderId: rentalOrderId as string,
+                customerId,
+                amount: session.amount_total! / 100,
+                paidAt: new Date(session.created * 100)
+            }
+        })
 
+        await tx.rentalOrder.update({
+            where: {
+                id: rentalOrderId
+            },
+            data: {
+                status: RentalStatus.PAID
+            }
+        })
 
-export const handleChangeSubscription = async (payload: Stripe.Subscription) => {
-
-    const { id: stripeSubscriptionId, status: payloadStatus } = payload
-
-    const { COMPLETED, FAILED, EXPIRED } = PaymentStatus
-
-
-    const status = (payloadStatus === 'active' || payloadStatus === 'trialing') ? COMPLETED :
-        payloadStatus === 'canceled' ? FAILED : EXPIRED
-
-
-    const currentPeriodEnd = await getPeriodEnd(payload)
-
-
-    const subscription = await prisma.payment.findUnique({
-        where: {
-            stripeSubscriptionId
-        }
-    })
-
-
-    if (!subscription) {
-        return;
-    }
-
-
-    await prisma.payment.update({
-        where: {
-            stripeSubscriptionId
-        },
-        data: {
-            status,
-            currentPeriodEnd
-        }
     })
 }

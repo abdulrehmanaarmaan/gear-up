@@ -1,8 +1,33 @@
+import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma"
+import { IGearFilters } from "./gear.interface"
 
-const getGearsFromDB = async () => {
+const getGearsFromDB = async (payload: IGearFilters) => {
+
+    const { category, price, brand } = payload!
+
+    const where: Prisma.GearItemWhereInput = {};
+
+    if (category) {
+        where.categoryId = category;
+    }
+
+    if (brand) {
+        where.brand = {
+            equals: brand,
+            mode: "insensitive"
+        };
+    }
+
+    if (price) {
+        where.pricePerDay = {
+            lte: Number(price)
+        };
+    }
 
     const result = await prisma.gearItem.findMany({
+
+        where,
         include: {
             provider: true,
             category: true,
@@ -33,7 +58,7 @@ const getSingleGear = async (id: string) => {
     return result
 }
 
-const getGearCategories = async () => {
+const getCategories = async () => {
 
     const result = await prisma.category.findMany({
         include: {
@@ -47,5 +72,5 @@ const getGearCategories = async () => {
 export const gearServices = {
     getGearsFromDB,
     getSingleGear,
-    getGearCategories
+    getCategories
 }

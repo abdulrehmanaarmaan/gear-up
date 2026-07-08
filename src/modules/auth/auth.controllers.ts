@@ -6,25 +6,25 @@ import httpStatus from "http-status"
 
 const { CREATED, OK } = httpStatus
 
-const { createUserInDB, authorizeUserFromDB, getMyDetailsFromDB } = authServices
+const { createAccountInDB, loginUserFromDB, getAccountFromDB } = authServices
 
-const createUser = catchAsync(async (req: Request, res: Response) => {
+const createUserAccount = catchAsync(async (req: Request, res: Response) => {
 
-    const createdUser = await createUserInDB(req.body)
+    const createdAccount = await createAccountInDB(req.body)
 
     sendResponse(res, {
         success: true,
         statusCode: CREATED,
-        message: "User created successfully.",
+        message: "User registered successfully.",
         data: {
-            createdUser
+            createdAccount
         }
     })
 })
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
 
-    const { rest: authorizedUser, accessToken, refreshToken } = await authorizeUserFromDB(req.body)
+    const { rest: loggedUser, accessToken, refreshToken } = await loginUserFromDB(req.body)
 
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
@@ -43,31 +43,29 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         success: true,
         statusCode: OK,
-        message: "User authorized successfully.",
-        data: {
-            authorizedUser
-        }
+        message: "User logged successfully.",
+        data: loggedUser
     })
 })
 
-const getMyDetails = catchAsync(async (req: Request, res: Response) => {
+const getMyAccount = catchAsync(async (req: Request, res: Response) => {
 
     const { id } = req.user!
 
-    const myDetails = await getMyDetailsFromDB(id)
+    const myAccount = await getAccountFromDB(id)
 
     sendResponse(res, {
         success: true,
         statusCode: OK,
-        message: "Details retrieved successfully.",
+        message: "Account retrieved successfully.",
         data: {
-            myDetails
+            myAccount
         }
     })
 })
 
 export const authControllers = {
-    createUser,
+    createUserAccount,
     loginUser,
-    getMyDetails
+    getMyAccount
 }

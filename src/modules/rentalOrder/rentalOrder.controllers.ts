@@ -10,49 +10,47 @@ const { CREATED, OK } = httpStatus
 
 const createRentalOrder = catchAsync(async (req: Request, res: Response) => {
 
-    const createdOrder = await createOrderInDB(req.body)
+    const { body, user } = req
+
+    const createdOrder = await createOrderInDB(body, user?.id!)
 
     sendResponse(res, {
         success: true,
         statusCode: CREATED,
-        message: "Rental order created successfully.",
-        data: {
-            createdOrder
-        }
+        message: "Order created successfully.",
+        data: createdOrder
     })
 })
 
-const getAllRentalOrders = catchAsync(async (req: Request, res: Response) => {
+const getMyRentalOrders = catchAsync(async (req: Request, res: Response) => {
 
-    const allOrders = await getOrdersFromDB()
+    const myOrders = await getOrdersFromDB(req?.user?.id!)
 
     sendResponse(res, {
         success: true,
         statusCode: OK,
         message: "Rental orders retrieved successfully.",
-        data: {
-            allOrders
-        }
+        data: myOrders
     })
 })
 
-const getRentalOrderDetails = catchAsync(async (req: Request, res: Response) => {
+const getOrderDetails = catchAsync(async (req: Request, res: Response) => {
 
-    const orderDetails = await getSingleOrder(req.params.id as string)
+    const { params, user } = req
+
+    const orderDetails = await getSingleOrder(params.id as string, user?.id!)
 
     sendResponse(res, {
         success: true,
         statusCode: OK,
-        message: "Rental Order retrieved successfully.",
-        data: {
-            orderDetails
-        }
+        message: "Order details retrieved successfully.",
+        data: orderDetails
     })
 
 })
 
 export const rentalOrderControllers = {
     createRentalOrder,
-    getAllRentalOrders,
-    getRentalOrderDetails
+    getMyRentalOrders,
+    getOrderDetails
 }

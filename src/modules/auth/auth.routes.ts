@@ -4,12 +4,12 @@ import auth from "../../middlewares/auth";
 
 const router = Router()
 
-const { createUser, loginUser, getMyDetails } = authControllers
+const { createUserAccount, loginUser, getMyAccount } = authControllers
 
-router.post('/register', createUser)
+router.post('/register', createUserAccount)
 
 router.post('/login', loginUser)
 
-router.get('/me', auth(), getMyDetails)
+router.get('/me', auth(), getMyAccount)
 
 export const authRoutes = router

@@ -1,18 +1,23 @@
 import { Router } from "express";
 import { providerControllers } from "./provider.controllers";
+import auth from "../../middlewares/auth";
+import { UserRole } from "../../../generated/prisma/enums";
+import authorize from "../../middlewares/authorize";
 
 const router = Router()
 
 const { addGear, updateGear, removeGear, getMyOrders, updateOrderStatus } = providerControllers
 
-router.post("/gear", addGear)
+const { PROVIDER } = UserRole
 
-router.put('/gear/:id', updateGear)
+router.post("/gear", auth(), authorize(PROVIDER), addGear)
 
-router.delete('/gear/:id', removeGear)
+router.put('/gear/:id', auth(), authorize(PROVIDER), updateGear)
 
-router.get('/orders', getMyOrders)
+router.delete('/gear/:id', auth(), authorize(PROVIDER), removeGear)
 
-router.patch('/orders/:id', updateOrderStatus)
+router.get('/orders', auth(), authorize(PROVIDER), getMyOrders)
+
+router.patch('/orders/:id', auth(), authorize(PROVIDER), updateOrderStatus)
 
 export const providerRoutes = router

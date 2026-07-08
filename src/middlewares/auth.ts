@@ -35,9 +35,9 @@ const auth = () => {
             throw new Error("The token provided is invalid.")
         }
 
-        const { id, email, role } = verifiedToken as JwtPayload
+        const { id, email, role } = verifiedToken
 
-        const savedUser = await prisma.user.findUniqueOrThrow({
+        const loggedUser = await prisma.user.findUniqueOrThrow({
             where: {
                 id,
                 email,
@@ -45,8 +45,12 @@ const auth = () => {
             }
         })
 
-        if (savedUser?.status === UserStatus.SUSPENDED) {
-            throw new Error("Your account has been suspended.")
+        if (!loggedUser) {
+            throw new Error("User not found. Please, create an account.")
+        }
+
+        if (loggedUser?.status === UserStatus.SUSPENDED) {
+            throw new Error("Your account has been suspended by the admin.")
         }
 
         req.user = {

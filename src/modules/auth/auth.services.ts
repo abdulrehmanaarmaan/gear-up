@@ -1,12 +1,12 @@
 import bcrypt from "bcryptjs"
 import { prisma } from "../../lib/prisma"
-import { ILoginUser, IUser } from "./auth.interfaces"
+import { ILoginUser, IUserAccount } from "./auth.interfaces"
 import config from "../../config"
 import { jwtUtils } from "../../utils/jwt"
 
 const { bcrypt_salt_rounds, jwt_access_secret, jwt_access_expires_in, jwt_refresh_secret, jwt_refresh_expires_in } = config
 
-const createUserInDB = async (payload: IUser) => {
+const createAccountInDB = async (payload: IUserAccount) => {
 
     const { email, password } = payload
 
@@ -32,25 +32,25 @@ const createUserInDB = async (payload: IUser) => {
     return result
 }
 
-const authorizeUserFromDB = async (payload: ILoginUser) => {
+const loginUserFromDB = async (payload: ILoginUser) => {
 
     const { email, password: givenPassword } = payload
 
-    const result = await prisma.user.findUniqueOrThrow({
+    const createdAccount = await prisma.user.findUnique({
         where: {
             email
         }
     })
 
-    const { password, ...rest } = result
+    const { password, ...rest } = createdAccount!
 
     const matchedPassword = await bcrypt.compare(givenPassword, password)
 
     if (!matchedPassword) {
-        throw new Error("The password provided is password.")
+        throw new Error("The provided password is invalid.")
     }
 
-    const { id, role } = result
+    const { id, role } = rest
 
     const jwtPayload = {
         id,
@@ -80,11 +80,14 @@ const authorizeUserFromDB = async (payload: ILoginUser) => {
     }
 }
 
-const getMyDetailsFromDB = async (id: string) => {
+const getAccountFromDB = async (id: string) => {
 
     const result = await prisma.user.findUniqueOrThrow({
         where: {
             id
+        },
+        omit: {
+            password: true
         }
     })
 
@@ -92,7 +95,7 @@ const getMyDetailsFromDB = async (id: string) => {
 }
 
 export const authServices = {
-    createUserInDB,
-    authorizeUserFromDB,
-    getMyDetailsFromDB
+    createAccountInDB,
+    loginUserFromDB,
+    getAccountFromDB
 }

@@ -6,16 +6,16 @@ import auth from "../../middlewares/auth";
 
 const router = Router()
 
-const { getAllUsers, updateUserStatus, getAllGears, getAllRentalOrders } = adminControllers
+const { getAllUsers, updateUserStatus, getAllGearListings, getAllRentalOrders } = adminControllers
 
 const { ADMIN } = UserRole
 
 router.get('/users', auth(), authorize(ADMIN), getAllUsers)
 
-router.patch('/users/:id', updateUserStatus)
+router.patch('/users/:id', auth(), authorize(ADMIN), updateUserStatus)
 
-router.get('/gears', getAllGears)
+router.get('/gears', auth(), authorize(ADMIN), getAllGearListings)
 
-router.get('/rentals', getAllRentalOrders)
+router.get('/rentals', auth(), authorize(ADMIN), getAllRentalOrders)
 
 export const adminRoutes = router

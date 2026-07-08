@@ -6,14 +6,14 @@ import httpStatus from "http-status"
 
 export const createReview = catchAsync(async (req: Request, res: Response) => {
 
-    const createdReview = await createReviewInDB(req.body)
+    const { body, user } = req
+
+    const createdReview = await createReviewInDB(body, user?.id!)
 
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
         message: "Review created successfully.",
-        data: {
-            createdReview
-        }
+        data: createdReview
     })
 })

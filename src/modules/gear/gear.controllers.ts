@@ -4,21 +4,19 @@ import { gearServices } from "./gear.services"
 import sendResponse from "../../utils/sendResponse"
 import httpStatus from "http-status"
 
-const { getGearsFromDB, getSingleGear, getGearCategories: getCategories } = gearServices
+const { getGearsFromDB, getSingleGear, getCategories } = gearServices
 
 const { OK } = httpStatus
 
 const getGears = catchAsync(async (req: Request, res: Response) => {
 
-    const gears = await getGearsFromDB()
+    const gears = await getGearsFromDB(req.query)
 
     sendResponse(res, {
         success: true,
         statusCode: OK,
         message: "Gears retrieved successfully.",
-        data: {
-            gears
-        }
+        data: gears
     })
 
 })
@@ -30,10 +28,8 @@ const getGearDetails = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         success: true,
         statusCode: OK,
-        message: "Gear retrieved successfully.",
-        data: {
-            gear
-        }
+        message: "Gear details retrieved successfully.",
+        data: gear
     })
 
 })
@@ -46,9 +42,7 @@ const getGearCategories = catchAsync(async (req: Request, res: Response) => {
         success: true,
         statusCode: OK,
         message: "Gear categories retrieved successfully.",
-        data: {
-            categories
-        }
+        data: categories
     })
 })
 

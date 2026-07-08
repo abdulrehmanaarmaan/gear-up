@@ -1,22 +1,32 @@
 model Payment {
-    id                   String        @id @default(cuid())
-    rentalOrderId        String
-    rentalOrder          RentalOrder   @relation(fields: [rentalOrderId], references: [id], onDelete: Cascade)
-    customerId           String        @unique
-    customer             User          @relation(fields: [customerId], references: [id], onDelete: Cascade)
-    // transactionId        String        @unique
-    // paymentIntentId      String?
-    // amount               Decimal       @db.Decimal(10, 2)
-    // currency             String        @default("BDT")
-    // method               PaymentMethod
-    // provider             String        @default("STRIPE")
-    status               PaymentStatus @default(PENDING)
-    stripeCustomerId     String        @unique
-    stripeSubscriptionId String        @unique
-    // paidAt               DateTime?
-    currentPeriodEnd     DateTime
-    createdAt            DateTime      @default(now())
-    updatedAt            DateTime      @updatedAt
+    id String @id @default(uuid())
+
+    rentalOrderId String      @unique
+    rentalOrder   RentalOrder @relation(fields: [rentalOrderId], references: [id], onDelete: Cascade)
+
+    customerId String
+    customer   User   @relation(fields: [customerId], references: [id])
+
+    transactionId   String? @unique
+    paymentIntentId String? @unique
+
+    stripeCustomerId String?
+
+    amount Decimal @db.Decimal(10, 2)
+
+    currency String @default("BDT")
+
+    provider String? @default("STRIPE")
+
+    method PaymentMethod? @default(CARD)
+
+    status PaymentStatus @default(PENDING)
+
+    paidAt DateTime?
+
+    createdAt DateTime @default(now())
+
+    updatedAt DateTime @updatedAt
 
     @@map("payments")
 }

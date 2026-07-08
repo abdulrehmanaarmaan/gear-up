@@ -2,8 +2,8 @@ import { Response } from "express"
 
 interface TResponse<T> {
     statusCode: number,
-    success: boolean,
-    message: string,
+    success?: boolean,
+    message?: string,
     data?: T,
     error?: string
 }

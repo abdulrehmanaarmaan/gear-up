@@ -5,7 +5,7 @@ const getUsersFromDB = async () => {
 
     const result = await prisma.user.findMany({
         include: {
-            payments: true,
+            payment: true,
             reviews: true,
             gearItems: true,
             customerOrders: true,
@@ -28,7 +28,9 @@ const updateStatusInDB = async (id: string, status: UserStatus) => {
     })
 
     if (user?.status === status) {
-        return false;
+        return {
+            updatedStatus: false
+        };
     }
 
     const result = await prisma.user.update({
@@ -42,7 +44,10 @@ const updateStatusInDB = async (id: string, status: UserStatus) => {
         }
     })
 
-    return result
+    return {
+        ...result,
+        updatedStatus: true
+    }
 }
 
 const getGearsFromDB = async () => {
@@ -72,8 +77,6 @@ const getRentalOrders = async () => {
     })
     return result
 }
-
-
 
 export const adminServices = {
     getUsersFromDB,

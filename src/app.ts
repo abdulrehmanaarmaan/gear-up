@@ -8,7 +8,7 @@ import { rentalOrderRoutes } from "./modules/rentalOrder/rentalOrder.routes"
 import { paymentRoutes } from "./modules/payment/payment.routes"
 import { providerRoutes } from "./modules/provider/provider.routes"
 import { adminRoutes } from "./modules/admin/admin.routes"
-import { reviewRoutes } from "./modules/review/review.route"
+import { reviewRoute } from "./modules/review/review.route"
 
 const app: Application = express()
 
@@ -19,7 +19,7 @@ app.use(cors({
     credentials: true
 }))
 
-app.use('/api/payments/webhook', express.raw({ type: 'application/json' }))
+app.use('/api/payments/confirm', express.raw({ type: 'application/json' }))
 
 app.use(express.json())
 app.use(cookieParser())
@@ -36,6 +36,6 @@ app.use('/api/provider', providerRoutes)
 
 app.use('/api/admin', adminRoutes)
 
-app.use('/api/reviews', reviewRoutes)
+app.use('/api/reviews', reviewRoute)
 
 export default app

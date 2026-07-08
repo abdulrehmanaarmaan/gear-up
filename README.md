@@ -1,0 +1,1 @@
+1. Should reviews be authorized.

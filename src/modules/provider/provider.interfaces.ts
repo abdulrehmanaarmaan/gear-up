@@ -1,7 +1,7 @@
-import { GearCondition, GearStatus } from "../../../generated/prisma/enums"
+import { GearCondition } from "../../../generated/prisma/enums"
 
-export interface GearSpecifications {
-    frame?: string;
+interface GearSpecifications {
+    frameMaterial?: string;
     wheelSize?: string;
     brakes?: string;
     gears?: string;
@@ -14,20 +14,16 @@ export interface GearSpecifications {
 }
 
 export interface IGear {
-    providerId: string
     categoryId: string
     title: string
     slug: string
     description: string
     brand: string
     model?: string
-    condition: GearCondition
+    condition?: GearCondition
     pricePerDay: number
     quantity: number
-    availableQuantity: number
     images: string[]
     specifications?: GearSpecifications
     location: string
-    isAvailable: boolean
-    status: GearStatus
 }

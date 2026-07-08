@@ -2,88 +2,94 @@ import { GearStatus, RentalStatus } from "../../../generated/prisma/enums"
 import { prisma } from "../../lib/prisma"
 import { IGear } from "./provider.interfaces"
 
-const addGearInDB = async (payload: IGear) => {
+const createGearInDB = async (payload: IGear, providerId: string) => {
 
     const result = await prisma.gearItem.create({
         data: {
-            ...payload
+            ...payload,
+            providerId,
+            availableQuantity: payload.quantity
         }
     })
 
     return result
 }
 
-const updateGearInDB = async (id: string, status: GearStatus) => {
-
-    await prisma.gearItem.findUniqueOrThrow({
-        where: {
-            id
-        }
-    })
+const updateGearInDB = async (id: string, providerId: string, status: GearStatus) => {
 
     const result = await prisma.gearItem.update({
+
         where: {
-            id
+            id,
+            providerId
         },
+
         data: {
             status
         }
     })
+
     return result
 }
 
-const removeGearFromDB = async (id: string) => {
-
-    await prisma.gearItem.findUniqueOrThrow({
-        where: {
-            id
-        }
-    })
+const removeGearFromDB = async (id: string, providerId: string) => {
 
     const result = await prisma.gearItem.delete({
         where: {
-            id
+            id,
+            providerId
         }
     })
 
     return result
 }
 
-const getMyOrdersFromDB = async (id: string) => {
+const getOrdersFromDB = async (providerId: string) => {
 
     const result = await prisma.rentalOrder.findMany({
         where: {
-            id
+            providerId
         }
     })
 
     return result
 }
 
-const updateStatusInDB = async (id: string, status: RentalStatus) => {
+const updateStatusInDB = async (id: string, providerId: string, status: RentalStatus) => {
 
-    await prisma.rentalOrder.findUniqueOrThrow({
+    const createdOrder = await prisma.rentalOrder.findUnique({
         where: {
-            id
+            id,
+            providerId
         }
     })
 
+    if (createdOrder?.status === status) {
+        return {
+            updatedStatus: false
+        }
+    }
+
     const result = await prisma.rentalOrder.update({
         where: {
-            id
+            id,
+            providerId
         },
         data: {
             status
         }
     })
 
-    return result
+    return {
+        ...result,
+        updateStatus: true
+    }
 }
 
 export const providerServices = {
-    addGearInDB,
+    createGearInDB,
     updateGearInDB,
     removeGearFromDB,
-    getMyOrdersFromDB,
+    getOrdersFromDB,
     updateStatusInDB,
 }

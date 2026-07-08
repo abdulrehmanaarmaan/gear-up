@@ -1,11 +1,12 @@
 import { prisma } from "../../lib/prisma";
-import { IReview } from "./review.interfaces";
+import { IReview } from "./review.interface";
 
-export const createReviewInDB = async (payload: IReview) => {
+export const createReviewInDB = async (payload: IReview, customerId: string) => {
 
     const result = await prisma.review.create({
         data: {
-            ...payload
+            ...payload,
+            customerId
         }
     })
 

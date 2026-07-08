@@ -1,19 +1,20 @@
 import { Router } from "express";
 import { paymentControllers } from "./payment.controllers";
 import auth from "../../middlewares/auth";
+import { UserRole } from "../../../generated/prisma/enums";
+import authorize from "../../middlewares/authorize";
 
 const router = Router()
 
-const { createPayment, verifyPayment, getMyPayments, getPaymentDetails, handleStripeWebhook } = paymentControllers
+const { createPayment, getMyPayments, getPaymentDetails, handleStripeWebhook } = paymentControllers
+const { CUSTOMER } = UserRole
 
-router.post('/create', auth(), createPayment)
+router.post('/create', auth(), authorize(CUSTOMER), createPayment)
 
-router.post('/confirm', verifyPayment)
+router.post("/confirm", handleStripeWebhook)
 
-router.get('/', getMyPayments)
+router.get('/', auth(), authorize(CUSTOMER), getMyPayments)
 
-router.get('/:id', getPaymentDetails)
-
-router.post("/webhook", handleStripeWebhook)
+router.get('/:id', auth(), authorize(CUSTOMER), getPaymentDetails)
 
 export const paymentRoutes = router

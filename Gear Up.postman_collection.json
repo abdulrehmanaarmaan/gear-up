@@ -1,0 +1,48 @@
+{
+  "info": {
+    "_postman_id": "d07c3308-8a62-454e-8a95-9636e8aa7385",
+    "name": "Gear Up",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54745294",
+    "_collection_link": "https://go.postman.co/collection/54745294-d07c3308-8a62-454e-8a95-9636e8aa7385?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "New Folder",
+      "item": []
+    },
+    {
+      "name": "Auth",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n \"email\": \"abd@gmail.com\",\r\n \"password\": \"abd123456\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

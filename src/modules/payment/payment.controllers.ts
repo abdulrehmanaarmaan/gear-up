@@ -4,53 +4,63 @@ import { paymentServices } from "./payment.services"
 import sendResponse from "../../utils/sendResponse"
 import httpStatus from "http-status"
 
-const { createPaymentInDB, handleWebhook } = paymentServices
+const { createCheckoutSession, handleWebhook, getPaymentsFromDB, getSinglePayment } = paymentServices
 
 const { OK } = httpStatus
 
 const createPayment = catchAsync(async (req: Request, res: Response) => {
 
-    const { id } = req.user!
+    const { user, body } = req
 
-    const paymentUrl = await createPaymentInDB(id)
+    const checkoutUrl = await createCheckoutSession(user?.id!, body?.rentalOrderId)
 
     sendResponse(res, {
         success: true,
         statusCode: OK,
-        message: "Checkout completed successfully.",
-        data: {
-            paymentUrl
-        }
+        message: "Payment session created successfully.",
+        data: checkoutUrl
     })
 })
-
-const verifyPayment = () => {
-
-}
-
-const getMyPayments = () => {
-
-}
-
-const getPaymentDetails = () => {
-
-}
 
 const handleStripeWebhook = catchAsync(async (req: Request, res: Response) => {
     const event = req.body
     const signature = req.headers['stripe-signature'] as string
     await handleWebhook(event, signature)
     sendResponse(res, {
+        statusCode: OK
+    })
+})
+
+const getMyPayments = catchAsync(async (req: Request, res: Response) => {
+
+    const myPayments = await getPaymentsFromDB(req?.user?.id!)
+
+    sendResponse(res, {
         success: true,
         statusCode: OK,
-        message: "Webhook handled successfully."
+        message: "Payments retrieved successfully.",
+        data: myPayments
+    })
+
+})
+
+const getPaymentDetails = catchAsync(async (req: Request, res: Response) => {
+
+    const { params, user } = req
+
+    const paymentDetails = await getSinglePayment(params.id as string, user?.id!)
+
+    sendResponse(res, {
+        success: true,
+        statusCode: OK,
+        message: "Payment details retrieved successfully.",
+        data: paymentDetails
     })
 })
 
 export const paymentControllers = {
     createPayment,
-    verifyPayment,
+    handleStripeWebhook,
     getMyPayments,
     getPaymentDetails,
-    handleStripeWebhook
 }

@@ -27,9 +27,9 @@ const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params
     const { status } = await req.body
 
-    const updatedUser = await updateStatusInDB(id as string, status)
+    const user = await updateStatusInDB(id as string, status)
 
-    if (updatedUser === false) {
+    if (user?.updatedStatus == false) {
         return sendResponse(res, {
             success: false,
             statusCode: CONFLICT,
@@ -42,19 +42,19 @@ const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
         statusCode: OK,
         message: "User updated successfully.",
         data: {
-            updatedUser
+            user
         }
     })
 })
 
-const getAllGears = catchAsync(async (req: Request, res: Response) => {
+const getAllGearListings = catchAsync(async (req: Request, res: Response) => {
 
     const gears = await getGearsFromDB()
 
     sendResponse(res, {
         success: true,
         statusCode: OK,
-        message: "Gears retrieved successfully.",
+        message: "Gear listings retrieved successfully.",
         data: {
             gears
         }
@@ -79,6 +79,6 @@ const getAllRentalOrders = catchAsync(async (req: Request, res: Response) => {
 export const adminControllers = {
     getAllUsers,
     updateUserStatus,
-    getAllGears,
+    getAllGearListings,
     getAllRentalOrders
 }
