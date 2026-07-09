@@ -4,21 +4,19 @@ interface TResponse<T> {
     statusCode: number,
     success?: boolean,
     message?: string,
-    data?: T,
-    error?: string
+    data?: T
 }
 
 const sendResponse = async <T>(res: Response, response: TResponse<T>) => {
 
     try {
-        const { statusCode, success, message, data, error } = response
+        const { statusCode, success, message, data } = response
 
         res.status(statusCode).json({
             success,
             statusCode,
             message,
-            data,
-            error
+            data
         })
     }
     catch (error: any) {

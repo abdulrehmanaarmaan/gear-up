@@ -145,6 +145,10 @@ const getSinglePayment = async (id: string, customerId: string) => {
         }
     })
 
+    if (!result) {
+        throw new Error("Payment not found.")
+    }
+
     return result
 }
 

@@ -17,7 +17,7 @@ const createAccountInDB = async (payload: IUserAccount) => {
     })
 
     if (alreadyCreated) {
-        throw new Error("User already created.")
+        throw new Error("Account already created.")
     }
 
     const hashedPassword = await bcrypt.hash(password, bcrypt_salt_rounds)

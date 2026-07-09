@@ -12,9 +12,13 @@ const createOrderInDB = async (payload: IRentalOrder, customerId: string) => {
         }
     })
 
+    if (!addedGear) {
+        throw new Error("Gear not found.")
+    }
+
     const totalDays = differenceInCalendarDays(rentalEndDate, rentalStartDate) + 1
 
-    const { providerId, pricePerDay } = addedGear!
+    const { providerId, pricePerDay } = addedGear
 
     const subtotal = Number(pricePerDay) * quantity * totalDays
 
@@ -50,7 +54,7 @@ const getOrdersFromDB = async (customerId: string) => {
             customer: true,
             provider: true,
             gear: true,
-            payments: true,
+            payment: true,
             reviews: true
         }
     })
@@ -71,7 +75,7 @@ const getSingleOrder = async (id: string, customerId: string) => {
             customer: true,
             provider: true,
             gear: true,
-            payments: true,
+            payment: true,
             reviews: true
         }
     })

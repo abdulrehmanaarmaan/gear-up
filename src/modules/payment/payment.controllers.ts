@@ -6,13 +6,22 @@ import httpStatus from "http-status"
 
 const { createCheckoutSession, handleWebhook, getPaymentsFromDB, getSinglePayment } = paymentServices
 
-const { OK } = httpStatus
+const { OK, BAD_REQUEST } = httpStatus
 
 const createPayment = catchAsync(async (req: Request, res: Response) => {
 
     const { user, body } = req
+    const { rentalOrderId } = await body
 
-    const checkoutUrl = await createCheckoutSession(user?.id!, body?.rentalOrderId)
+    if (!rentalOrderId) {
+        return sendResponse(res, {
+            success: false,
+            statusCode: BAD_REQUEST,
+            message: "Rental order ID is required."
+        })
+    }
+
+    const checkoutUrl = await createCheckoutSession(user?.id!, rentalOrderId)
 
     sendResponse(res, {
         success: true,

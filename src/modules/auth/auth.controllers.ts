@@ -16,9 +16,7 @@ const createUserAccount = catchAsync(async (req: Request, res: Response) => {
         success: true,
         statusCode: CREATED,
         message: "User registered successfully.",
-        data: {
-            createdAccount
-        }
+        data: createdAccount
     })
 })
 
@@ -58,9 +56,7 @@ const getMyAccount = catchAsync(async (req: Request, res: Response) => {
         success: true,
         statusCode: OK,
         message: "Account retrieved successfully.",
-        data: {
-            myAccount
-        }
+        data: myAccount
     })
 })
 

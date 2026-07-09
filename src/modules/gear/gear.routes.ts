@@ -1,15 +1,14 @@
 import { Router } from "express";
 import { gearControllers } from "./gear.controllers";
-import auth from "../../middlewares/auth";
 
 const router = Router()
 
 const { getGears, getGearDetails, getGearCategories } = gearControllers
 
-router.get('gears/', auth(), getGears)
+router.get('/gears', getGears)
 
-router.get('gears/:id', auth(), getGearDetails)
+router.get('/gears/:id', getGearDetails)
 
-router.get('/categories', auth(), getGearCategories)
+router.get('/categories', getGearCategories)
 
 export const gearRoutes = router

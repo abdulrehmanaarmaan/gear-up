@@ -4,12 +4,15 @@ import { IGearFilters } from "./gear.interface"
 
 const getGearsFromDB = async (payload: IGearFilters) => {
 
-    const { category, price, brand } = payload!
+    const { categoryId, price, brand } = payload!
 
     const where: Prisma.GearItemWhereInput = {};
 
-    if (category) {
-        where.categoryId = category;
+    if (categoryId) {
+        where.categoryId = {
+            equals: categoryId,
+            mode: "insensitive"
+        };
     }
 
     if (brand) {
@@ -20,9 +23,18 @@ const getGearsFromDB = async (payload: IGearFilters) => {
     }
 
     if (price) {
-        where.pricePerDay = {
-            lte: Number(price)
-        };
+        where.OR = [
+            {
+                pricePerDay: {
+                    equals: Number(price)
+                }
+            },
+            {
+                pricePerDay: {
+                    lte: Number(price)
+                }
+            }
+        ];
     }
 
     const result = await prisma.gearItem.findMany({
