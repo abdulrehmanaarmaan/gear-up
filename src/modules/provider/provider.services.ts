@@ -1,6 +1,6 @@
 import { GearStatus, RentalStatus } from "../../../generated/prisma/enums"
 import { prisma } from "../../lib/prisma"
-import { IGear } from "./provider.interfaces"
+import { IGear, IUpdateGear } from "./provider.interfaces"
 
 const createGearInDB = async (payload: IGear, providerId: string) => {
 
@@ -15,7 +15,7 @@ const createGearInDB = async (payload: IGear, providerId: string) => {
     return result
 }
 
-const updateGearInDB = async (id: string, providerId: string, status: GearStatus) => {
+const updateGearInDB = async (id: string, providerId: string, payload: IUpdateGear) => {
 
     const result = await prisma.gearItem.update({
 
@@ -25,7 +25,7 @@ const updateGearInDB = async (id: string, providerId: string, status: GearStatus
         },
 
         data: {
-            status
+            ...payload
         }
     })
 

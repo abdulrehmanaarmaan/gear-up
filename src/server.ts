@@ -4,12 +4,12 @@ import { prisma } from "./lib/prisma";
 
 const main = async () => {
     try {
-        await prisma.$disconnect();
+        await prisma.$connect();
 
         const { port } = config
 
         app.listen(port, () => {
-            console.log(`Example app listening on port ${port}`)
+            console.log(`GearUp listening on port ${port}`)
         })
     }
 

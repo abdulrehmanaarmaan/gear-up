@@ -8,4 +8,4 @@ const connectionString = `${config.database_url}`;
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
-export { prisma };
+export { prisma, adapter };

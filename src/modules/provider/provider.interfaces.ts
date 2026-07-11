@@ -27,3 +27,19 @@ export interface IGear {
     specifications?: GearSpecifications
     location: string
 }
+
+export interface IUpdateGear {
+    categoryId?: string;
+    title?: string;
+    slug?: string;
+    description?: string;
+    brand?: string;
+    model?: string;
+    condition?: GearCondition;
+    pricePerDay?: number;
+    quantity?: number;
+    images?: string[];
+    specifications?: GearSpecifications;
+    location?: string;
+    isAvailable?: boolean;
+}

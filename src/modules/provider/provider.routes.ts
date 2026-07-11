@@ -12,7 +12,7 @@ const { PROVIDER } = UserRole
 
 router.post("/gear", auth(), authorize(PROVIDER), addGear)
 
-router.put('/gear/:id', auth(), authorize(PROVIDER), updateGear)
+router.patch('/gear/:id', auth(), authorize(PROVIDER), updateGear)
 
 router.delete('/gear/:id', auth(), authorize(PROVIDER), removeGear)
 

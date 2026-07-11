@@ -9,9 +9,7 @@ const { createCheckoutSession, handleWebhook, getPaymentsFromDB, getSinglePaymen
 const { OK, BAD_REQUEST } = httpStatus
 
 const createPayment = catchAsync(async (req: Request, res: Response) => {
-
-    const { user, body } = req
-    const { rentalOrderId } = await body
+    const rentalOrderId = await req.body?.rentalOrderId
 
     if (!rentalOrderId) {
         return sendResponse(res, {
@@ -21,7 +19,7 @@ const createPayment = catchAsync(async (req: Request, res: Response) => {
         })
     }
 
-    const checkoutUrl = await createCheckoutSession(user?.id!, rentalOrderId)
+    const checkoutUrl = await createCheckoutSession(req?.user?.id!, rentalOrderId)
 
     sendResponse(res, {
         success: true,

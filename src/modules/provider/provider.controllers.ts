@@ -25,9 +25,9 @@ const addGear = catchAsync(async (req: Request, res: Response) => {
 
 const updateGear = catchAsync(async (req: Request, res: Response) => {
 
-    const { params, body, user } = req
+    const { params, user, body } = req
 
-    const updatedGear = await updateGearInDB(params.id as string, user?.id!, body.status)
+    const updatedGear = await updateGearInDB(params.id as string, user?.id!, body)
 
     sendResponse(res, {
         success: true,
@@ -41,7 +41,7 @@ const removeGear = catchAsync(async (req: Request, res: Response) => {
 
     const { params, user } = req
 
-    const removedGear = removeGearFromDB(params.id as string, user?.id!)
+    const removedGear = await removeGearFromDB(params.id as string, user?.id!)
 
     sendResponse(res, {
         success: true,

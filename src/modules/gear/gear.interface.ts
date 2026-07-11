@@ -1,5 +1,5 @@
 export interface IGearFilters {
-    categoryId?: string,
+    category?: string,
     price?: string,
     brand?: string
 }

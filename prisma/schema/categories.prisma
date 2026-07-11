@@ -7,7 +7,6 @@ model Category {
     gearItems   GearItem[]
     createdAt   DateTime   @default(now())
     updatedAt   DateTime   @updatedAt
-    gearItemsId String
 
-    @@map("categories")
+    @@map("gear_categories")
 }

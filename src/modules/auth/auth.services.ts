@@ -8,7 +8,7 @@ const { bcrypt_salt_rounds, jwt_access_secret, jwt_access_expires_in, jwt_refres
 
 const createAccountInDB = async (payload: IUserAccount) => {
 
-    const { email, password } = payload
+    const { email, password: givenPassword } = payload
 
     const alreadyCreated = await prisma.user.findUnique({
         where: {
@@ -20,16 +20,16 @@ const createAccountInDB = async (payload: IUserAccount) => {
         throw new Error("Account already created.")
     }
 
-    const hashedPassword = await bcrypt.hash(password, bcrypt_salt_rounds)
+    const hashedPassword = await bcrypt.hash(givenPassword, bcrypt_salt_rounds)
 
-    const result = await prisma.user.create({
+    const { password, ...rest } = await prisma.user.create({
         data: {
             ...payload,
             password: hashedPassword
         }
     })
 
-    return result
+    return rest
 }
 
 const loginUserFromDB = async (payload: ILoginUser) => {
@@ -41,6 +41,10 @@ const loginUserFromDB = async (payload: ILoginUser) => {
             email
         }
     })
+
+    if (!createdAccount) {
+        throw new Error("User not registered. Create an account.")
+    }
 
     const { password, ...rest } = createdAccount!
 
